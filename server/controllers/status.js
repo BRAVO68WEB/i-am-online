@@ -22,7 +22,7 @@ module.exports.checkStatus = async (req, res, next) => {
     const userStatus = await UserStatus.findOne({
         username: req.params.username
     });
-    var lastPingTs = (format(userStatus.lastSeen, "x"));
+    var lastPingTs = (format(userStatus?.lastSeen, "x"));
     var currentTs = (format(new Date(), "x"));
     // var diff = currentTs - lastPingTs;
     // console.log(diff/60000);

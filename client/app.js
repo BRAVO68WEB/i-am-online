@@ -4,6 +4,14 @@ import { hideBin } from 'yargs/helpers'
 const argv = yargs(hideBin(process.argv)).argv
 import axios from 'axios'
 import chalk from 'chalk'
+import ws from 'ws';
+
+const client = new ws('ws://localhost:3000');
+
+client.on('open', () => {
+  // Causes the server to print "Hello"
+  client.send('Hello');
+});
 
 if (argv.url && argv.username && argv.authkey) {
     const {
@@ -11,6 +19,7 @@ if (argv.url && argv.username && argv.authkey) {
         authkey,
         url
     } = argv
+
     if (typeof username === 'string' && typeof authkey === 'string' && typeof url === 'string') {
         const config = {
             url: url + "/status/heartbeat/" + username + "?auth=" + authkey,
@@ -20,7 +29,7 @@ if (argv.url && argv.username && argv.authkey) {
         function sendHeartbeat() {
             axios(config)
             .then(function (response) {
-                if(response.data.updateUserStatus.username == username){
+                if(response.data?.updateUserStatus?.username == username){
                     console.log(chalk.green("User Status Ping Successfully"))
                 }
                 else{
@@ -38,7 +47,6 @@ if (argv.url && argv.username && argv.authkey) {
             sendHeartbeat()
         }, 60000)
     } else {
-        
         console.log(chalk.red('Username')+', '+url+' and '+authkey+'must be strings')
     }
 } else {
